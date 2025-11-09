@@ -1,0 +1,104 @@
+╔═══════════════════════════════════════════════════════════════╗
+║         VISUAL GUIDE - WHERE TO PASTE CODE IN main.py        ║
+╚═══════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────┐
+│ EDIT #1: ADD ADMIN ROUTES                                    │
+└─────────────────────────────────────────────────────────────┘
+
+In main.py, find this section (around line 1030):
+
+    ┌───────────────────────────────────────────┐
+    │ ...                                       │
+    │ except Exception as e:                    │
+    │     app.logger.error(...)                 │
+    │     return jsonify({...}), 500           │
+    │                                           │  ← Line 1033
+    │ # Error handlers                          │  ← BEFORE THIS LINE
+    │ @app.errorhandler(404)                    │
+    │ def not_found(error):                     │
+    │     ...                                   │
+    └───────────────────────────────────────────┘
+
+PASTE the admin routes HERE ↓
+
+    ┌───────────────────────────────────────────┐
+    │ ...                                       │
+    │ except Exception as e:                    │
+    │     app.logger.error(...)                 │
+    │     return jsonify({...}), 500           │
+    │                                           │
+    │ # Admin Routes                            │  ← PASTE FROM
+    │ @app.route('/admin/events...')           │     ADD_TO_MAIN.py
+    │ @token_required                           │
+    │ @admin_required                           │
+    │ def get_event_attendance(...):           │
+    │     ...                                   │
+    │     (all the admin routes)                │
+    │     ...                                   │  ← PASTE UNTIL HERE
+    │                                           │
+    │ # Error handlers                          │  ← THEN THIS COMES
+    │ @app.errorhandler(404)                    │
+    └───────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────┐
+│ EDIT #2: REPLACE initialize_database FUNCTION                │
+└─────────────────────────────────────────────────────────────┘
+
+In main.py, find this function (around line 162):
+
+    ┌───────────────────────────────────────────┐
+    │ def initialize_database():                │  ← Find this function
+    │     with app.app_context():               │
+    │         db.create_all()                   │
+    │         admin = User.query...             │
+    │         ...                               │
+    │         print("Database initialized...")  │  ← Delete everything
+    └───────────────────────────────────────────┘
+
+REPLACE with the NEW version ↓
+
+    ┌───────────────────────────────────────────┐
+    │ def initialize_database():                │  ← REPLACE WITH
+    │     with app.app_context():               │     VERSION FROM
+    │         db.create_all()                   │     UPDATE_INITIALIZE
+    │         admin = User.query...             │     _DB.py
+    │         ...                               │
+    │         # Create dummy events             │  ← This is NEW
+    │         event_count = Event.query...      │
+    │         if event_count == 0:              │
+    │             dummy_events = [...]          │  ← Creates 8 events
+    │         ...                               │
+    │         print("Database initialized...")  │
+    └───────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════
+
+                       QUICK REFERENCE
+
+File to Edit:    main.py
+Changes Needed:  2 edits (copy-paste)
+Time Required:   2 minutes
+
+Copy From:
+  • ADD_TO_MAIN.py ──────────► Paste at line 1033
+  • UPDATE_INITIALIZE_DB.py ─► Replace function at line 162
+
+═══════════════════════════════════════════════════════════════
+
+After editing, your main.py will have:
+
+✓ Admin routes for attendance marking
+✓ Automatic creation of 8 dummy events
+✓ All backend functionality ready
+
+Then just restart:
+  python main.py
+
+And you'll see:
+  "Created 8 dummy events successfully!"
+  "Database initialized successfully!"
+
+═══════════════════════════════════════════════════════════════
